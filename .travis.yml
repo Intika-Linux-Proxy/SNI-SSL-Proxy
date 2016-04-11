@@ -1,0 +1,40 @@
+os:
+    - linux
+    - osx
+language: c
+compiler:
+    - gcc
+    - clang
+addons:
+    apt:
+        packages:
+            - tree
+install:
+    - 'brew update || true'
+    - 'brew install tree xz || true'
+before_script:
+    - 'builddir=$(pwd)'
+    - 'cd /tmp'
+    - 'curl -s -L https://github.com/sustrik/libmill/archive/master.tar.gz | tar -zxf -'
+    - 'mv libmill-master libmill'
+    - 'cd libmill'
+    - 'libtoolize || true'
+    - './autogen.sh'
+    - './configure'
+    - 'make'
+    - 'rm $(ls .libs/* | grep -v "\.a$")'
+    - 'cd $builddir'
+script:
+    - 'mkdir -p m4'
+    - 'autoreconf -if'
+    - 'export CPPFLAGS=-I/tmp/libmill'
+    - 'export LDFLAGS=-L/tmp/libmill/.libs'
+    - '[[ $(uname) == "Darwin" ]] || export LIBS=-lrt'
+    - './configure --prefix=/usr --sysconfdir=/etc'
+    - 'make'
+    - 'make check'
+    - 'make DESTDIR=$(pwd)/dist/ install'
+    - 'tree $(pwd)/dist/'
+    - 'make dist'
+    - 'make dist-xz'
+    - 'make dist-zip'
