@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include "buffer.h"
 #include "log.h"
+#include "socks5.h"
 #include "tcprelay.h"
 
 
@@ -35,21 +36,36 @@ static int tcpsockfd(tcpsock sock)
 }
 
 
-coroutine static void proxy(tcpsock sock, buffer_t *buf, const char *host, int port)
+coroutine static void proxy(tcpsock sock, buffer_t *buf, const char *socks5_host, int socks5_port, const char *host, int port)
 {
     int64_t deadline = now() + 10000;
 
     LOG("connect %s:%d", host, port);
-    ipaddr addr = ipremote(host, port, IPADDR_PREF_IPV4, deadline);
-    if (errno != 0)
+
+    tcpsock conn;
+    if (socks5_host == NULL)
     {
-        goto cleanup;
+        ipaddr addr = ipremote(host, port, IPADDR_PREF_IPV4, deadline);
+        if (errno != 0)
+        {
+            goto cleanup;
+        }
+        conn = tcpconnect(addr, deadline);
+        if (conn == 0)
+        {
+            goto cleanup;
+        }
     }
-    tcpsock conn = tcpconnect(addr, deadline);
-    if (errno != 0)
+    else
     {
-        goto cleanup;
+        conn = socks5_connect(socks5_host, socks5_port, host, port);
+        if (conn == 0)
+        {
+            LOG("failed to connect SOCKS5 server");
+            goto cleanup;
+        }
     }
+
     tcpsend(conn, buffer_data(buf), buffer_len(buf), -1);
     tcpflush(conn, -1);
     buffer_del(buf);
@@ -112,7 +128,7 @@ static const char *get_http_host(buffer_t *buf)
 }
 
 
-coroutine void http_worker(tcpsock sock)
+coroutine void http_worker(tcpsock sock, const char *socks5_host, int socks5_port)
 {
     int64_t deadline = now() + 10000;
 
@@ -150,7 +166,7 @@ coroutine void http_worker(tcpsock sock)
         }
         else if (*host != '\0')
         {
-            go(proxy(sock, &buffer, host, 80));
+            go(proxy(sock, &buffer, socks5_host, socks5_port, host, 80));
             return;
         }
     }
@@ -306,7 +322,7 @@ static const char *get_https_host(buffer_t *buf)
 }
 
 
-coroutine void https_worker(tcpsock sock)
+coroutine void https_worker(tcpsock sock, const char *socks5_host, int socks5_port)
 {
     int64_t deadline = now() + 10000;
 
@@ -344,7 +360,7 @@ coroutine void https_worker(tcpsock sock)
         }
         else if (*host != '\0')
         {
-            go(proxy(sock, &buffer, host, 443));
+            go(proxy(sock, &buffer, socks5_host, socks5_port, host, 443));
             return;
         }
     }

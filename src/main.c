@@ -38,6 +38,10 @@ coroutine static void http_listener(tcpsock ls);
 coroutine static void https_listener(tcpsock ls);
 
 
+static const char *socks5_host = NULL;
+static int socks5_port = 1080;
+
+
 int main(int argc, char **argv)
 {
     const char *host = "0.0.0.0";
@@ -67,6 +71,24 @@ int main(int argc, char **argv)
                 return EXIT_FAILURE;
             }
             host = argv[i + 1];
+            i++;
+        }
+        else if (strcmp(argv[i], "--socks5") == 0)
+        {
+            if (i + 2 > argc)
+            {
+                fprintf(stderr, "missing value after '%s'\n", argv[i]);
+                return EXIT_FAILURE;
+            }
+            socks5_host = argv[i + 1];
+            for (int j = 0; argv[i + 1][j] != '\0'; j++)
+            {
+                if (argv[i + 1][j] == ':')
+                {
+                    argv[i + 1][j] = '\0';
+                    socks5_port = atoi(argv[i + 1] + j + 1);
+                }
+            }
             i++;
         }
         else
@@ -109,6 +131,11 @@ int main(int argc, char **argv)
     }
     LOG("listen on %s:%d", host, 443);
 
+    if (socks5_host != NULL)
+    {
+        LOG("use socks5://%s:%d", socks5_host, socks5_port);
+    }
+
     runas("nobody");
 
     // fork worker
@@ -135,10 +162,12 @@ int main(int argc, char **argv)
 
 static void help(void)
 {
-    puts("usage: socks5 -a host -p port\n"
-           "  -h    show this help\n"
-           "  -w    number of workers\n"
-           "  -a    bind address");
+    puts("usage: socks5 [options]\n"
+         "  -h, --help            show this help\n"
+         "  -a <addr>             listen address, default: 0.0.0.0\n"
+         "  -p <port>             listen port, default: 1080\n"
+         "  -w <num>              number of workers\n"
+         "  --socks5 HOST[:PORT]  SOCKS5 proxy to use\n");
 }
 
 
@@ -158,7 +187,7 @@ coroutine static void http_listener(tcpsock ls)
 		{
             continue;
 		}
-        go(http_worker(sock));
+        go(http_worker(sock, socks5_host, socks5_port));
     }
 }
 
@@ -172,6 +201,6 @@ coroutine static void https_listener(tcpsock ls)
 		{
             continue;
 		}
-        go(https_worker(sock));
+        go(https_worker(sock, socks5_host, socks5_port));
     }
 }

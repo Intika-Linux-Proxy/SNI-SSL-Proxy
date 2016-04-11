@@ -37,7 +37,14 @@ sleep 1
 curl -vv --resolve github.com:80:127.0.0.1 http://github.com/
 curl -vv --resolve twitter.com:80:127.0.0.1 http://twitter.com/
 curl -vv --resolve github.com:80:127.0.0.1 "http://github.com/?foo=$(dd if=/dev/urandom bs=1 count=8000 | base32 -w 0)"
-curl -vv --resolve twitter.com:80:127.0.0.1 "http://twitter.com/?foo=$(dd if=/dev/urandom bs=1 count=8000 | base32 -w 0)"
+curl -vv --resolve github.com:443:127.0.0.1 -o /dev/null https://github.com/
+curl -vv --resolve twitter.com:443:127.0.0.1 -o /dev/null https://twitter.com/
+sudo pkill -INT sniproxy
+sudo src/sniproxy -a 127.0.0.1 -w 4 --socks5 127.0.0.1:1080 &
+sleep 1
+curl -vv --resolve github.com:80:127.0.0.1 http://github.com/
+curl -vv --resolve twitter.com:80:127.0.0.1 http://twitter.com/
+curl -vv --resolve github.com:80:127.0.0.1 "http://github.com/?foo=$(dd if=/dev/urandom bs=1 count=8000 | base32 -w 0)"
 curl -vv --resolve github.com:443:127.0.0.1 -o /dev/null https://github.com/
 curl -vv --resolve twitter.com:443:127.0.0.1 -o /dev/null https://twitter.com/
 sudo pkill -INT sniproxy
