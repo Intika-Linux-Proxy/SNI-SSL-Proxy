@@ -20,9 +20,8 @@ before_script:
     - 'cd libmill'
     - 'libtoolize || true'
     - './autogen.sh'
-    - './configure'
+    - './configure --enable-shared=false'
     - 'make'
-    - 'rm $(ls .libs/* | grep -v "\.a$")'
     - 'cd $builddir'
 script:
     - 'mkdir -p m4'

@@ -1,6 +1,6 @@
 # sniproxy #
 
-A simple HTTP/SNI proxy
+A simple HTTP/SNI proxy, support SOCKS5 as upstream proxy.
 
 ## Build ##
 
@@ -14,9 +14,8 @@ curl -s -L https://github.com/sustrik/libmill/archive/master.tar.gz | tar -zxf -
 mv libmill-master libmill
 cd libmill
 ./autogen.sh
-./configure
+./configure --enable-shared=false
 make
-rm $(ls .libs/* | grep -v "\.a$")
 cd ../
 # build muon
 autoreconf -if
@@ -40,9 +39,8 @@ curl -s -L https://github.com/sustrik/libmill/archive/master.tar.gz | tar -zxf -
 mv libmill-master libmill
 cd libmill
 ./autogen.sh
-./configure --host=arm-unknown-linux-gnueabihf
+./configure --enable-shared=false --host=arm-unknown-linux-gnueabihf
 make
-rm $(ls .libs/* | grep -v "\.a$")
 cd ../
 # build muon
 autoreconf -if
