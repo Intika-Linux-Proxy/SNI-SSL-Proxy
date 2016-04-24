@@ -1,0 +1,43 @@
+# Maintainer:  Xiaoxiao <i@pxx.io>
+
+pkgname=sniproxy-git
+pkgver=r
+pkgrel=1
+pkgdesc='A simple HTTP/SNI proxy, support SOCKS5 as upstream proxy'
+arch=('i686' 'x86_64' 'arm')
+url='https://github.com/XiaoxiaoPu/sniproxy'
+license=('GPL3')
+makedepends=('git')
+source=('git+https://github.com/XiaoxiaoPu/sniproxy.git'
+        'https://github.com/sustrik/libmill/archive/master.tar.gz')
+sha256sums=('SKIP'
+            'SKIP')
+
+pkgver() {
+    cd "${srcdir}/sniproxy"
+    echo "r$(git rev-list --count HEAD)"
+}
+
+prepare() {
+    cd "${srcdir}"
+    rm -rf libmill
+    mv libmill-master libmill
+    cd libmill
+    ./autogen.sh
+    ./configure --enable-shared=false
+    make libmill.la
+}
+
+build() {
+    cd "${srcdir}/sniproxy"
+    autoreconf -if
+    export CPPFLAGS="-I${srcdir}/libmill"
+    export LDFLAGS="-L${srcdir}/libmill/.libs"
+    ./configure --prefix=/usr --sysconfdir=/etc
+    make
+}
+
+package() {
+    cd "${srcdir}/sniproxy"
+    make DESTDIR="${pkgdir}" install
+}

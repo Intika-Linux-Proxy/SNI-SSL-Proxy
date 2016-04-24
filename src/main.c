@@ -165,7 +165,6 @@ static void help(void)
     puts("usage: socks5 [options]\n"
          "  -h, --help            show this help\n"
          "  -a <addr>             listen address, default: 0.0.0.0\n"
-         "  -p <port>             listen port, default: 1080\n"
          "  -w <num>              number of workers\n"
          "  --socks5 HOST[:PORT]  SOCKS5 proxy to use\n");
 }

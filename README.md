@@ -1,10 +1,14 @@
 # sniproxy #
 
+[![License](https://api.pxx.io/badge/badge/license-GPL%20v3.0-blue.svg)](https://www.gnu.org/licenses/gpl.html)
+[![Build Status](https://ci.pxx.io/buildStatus/icon?job=sniproxy)](https://ci.pxx.io/job/sniproxy)
+
+
 A simple HTTP/SNI proxy, support SOCKS5 as upstream proxy.
 
 ## Build ##
 
-### 1. Linux/OS X ###
+### 1. Linux/OS X/FreeBSD ###
 
 install GNU Autotools, then:
 
@@ -15,9 +19,9 @@ mv libmill-master libmill
 cd libmill
 ./autogen.sh
 ./configure --enable-shared=false
-make
+make libmill.la
 cd ../
-# build muon
+# build sniproxy
 autoreconf -if
 # export CFLAGS=-march=native
 export CPPFLAGS=-I$(pwd)/libmill
@@ -40,9 +44,9 @@ mv libmill-master libmill
 cd libmill
 ./autogen.sh
 ./configure --enable-shared=false --host=arm-unknown-linux-gnueabihf
-make
+make libmill.la
 cd ../
-# build muon
+# build sniproxy
 autoreconf -if
 # export CFLAGS=-march=native
 export CPPFLAGS=-I$(pwd)/libmill
