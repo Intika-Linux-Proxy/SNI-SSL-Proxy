@@ -21,7 +21,7 @@ before_script:
     - 'libtoolize || true'
     - './autogen.sh'
     - './configure --enable-shared=false'
-    - 'make'
+    - 'make libmill.la'
     - 'cd $builddir'
 script:
     - 'mkdir -p m4'

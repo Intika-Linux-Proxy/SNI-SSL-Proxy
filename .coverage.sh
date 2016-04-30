@@ -10,7 +10,7 @@ mv libmill-master libmill
 cd libmill
 ./autogen.sh
 ./configure --enable-shared=false
-make
+make libmill.la
 cd ../
 
 # build with coverage
