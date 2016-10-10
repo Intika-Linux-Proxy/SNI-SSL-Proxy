@@ -18,8 +18,10 @@ if [ -f Makefile ]; then
     make distclean
 fi
 autoreconf -if
-export CPPFLAGS=-I$(pwd)/libmill
-export LDFLAGS=-L$(pwd)/libmill/.libs
+export CPPFLAGS
+CPPFLAGS=-I$(pwd)/libmill
+export LDFLAGS
+LDFLAGS=-L$(pwd)/libmill/.libs
 export CFLAGS="-fprofile-arcs -ftest-coverage"
 ./configure --enable-debug
 sed -i 's/nobody/root/g' src/main.c
