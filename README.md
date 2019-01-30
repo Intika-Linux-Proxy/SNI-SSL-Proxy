@@ -1,10 +1,38 @@
-# sniproxy #
+# SNI-TLS-Proxy #
 
 [![License](https://api.pxx.io/badge/badge/license-GPL%20v3.0-blue.svg)](https://www.gnu.org/licenses/gpl.html)
 [![Build Status](https://ci.pxx.io/buildStatus/icon?job=sniproxy)](https://ci.pxx.io/job/sniproxy)
 
+A SNI/TLS/HTTP/HTTPS/IMAPs/POP3s/SMTPs Proxy, Supporting Upstream SOCKS5 proxy
 
-A simple HTTP/SNI proxy, support SOCKS5 as upstream proxy.
+## Usage ##
+
+`sniproxy -a 127.0.0.1 -w 8 --socks5 192.168.0.5:1080`
+
+## Custom DNS Through Firejail ##
+
+`firejail --dns=8.8.8.8 --noprofile sniproxy -a 127.0.0.1 -w 8 --socks5 192.168.0.5:1080`
+
+## Command Details ##
+
+```
+$ sniproxy -h
+usage: socks5 [options]
+  -h, --help            show this help
+  -a <addr>             listen address, default: 0.0.0.0
+  -w <num>              number of workers
+  --socks5 HOST[:PORT]  SOCKS5 proxy to use
+```
+
+## Listening Ports ##
+
+```
+HTTP: 80 
+HTTPS: 443 
+IMAPs: 993 
+POP3s: 995 
+SMTPs: 465, 587
+```
 
 ## Build ##
 
@@ -64,7 +92,9 @@ append `--enable-static` while running `./configure`.
 
 ## License ##
 
+Copyright (C) 2019, Intika <intika@librefox.org>
 Copyright (C) 2016, Xiaoxiao <i@pxx.io>
+
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
