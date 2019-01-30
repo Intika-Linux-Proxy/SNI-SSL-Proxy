@@ -93,6 +93,7 @@ append `--enable-static` while running `./configure`.
 ## License ##
 
 Copyright (C) 2019, Intika <intika@librefox.org>
+
 Copyright (C) 2016, Xiaoxiao <i@pxx.io>
 
 
