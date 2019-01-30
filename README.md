@@ -38,8 +38,11 @@ SMTPs: 465, 587
 
 Domain names filter support can be easily added, but i am not needing that feature so i won't be adding it (feel free to PR), you can run multiple instances of sniproxy under different local IPs to handle different domains routing to different location this much more efficient then domain text filter
 
-Example : Domain1 -> 10.0.0.1 -> Sniproxy-instance-1 -> Socks5-A
-          Domain2 -> 10.0.0.2 -> Sniproxy-instance-2 -> Socks5-B
+Example : 
+```
+Domain1 -> 10.0.0.1 -> Sniproxy-instance-1 -> Socks5-A
+Domain2 -> 10.0.0.2 -> Sniproxy-instance-2 -> Socks5-B
+```
  
 ## Build ##
 
