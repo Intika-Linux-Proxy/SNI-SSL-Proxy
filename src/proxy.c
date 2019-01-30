@@ -45,6 +45,14 @@ coroutine static void proxy(tcpsock sock, buffer_t *buf, const char *socks5_host
     tcpsock conn;
     if (socks5_host == NULL)
     {
+        
+        //IPADDR_IPV4: get IPv4 address or error if it's not available
+        //IPADDR_IPV6: get IPv6 address or error if it's not available
+        //IPADDR_PREF_IPV4: get IPv4 address if possible, IPv6 address otherwise; error if none is available
+        //IPADDR_PREF_IPV6: get IPv6 address if possible, IPv4 address otherwise; error if none is available
+
+        //http://libmill.org/documentation.html
+        
         ipaddr addr = ipremote(host, port, IPADDR_PREF_IPV4, deadline);
         if (errno != 0)
         {
@@ -322,7 +330,7 @@ static const char *get_https_host(buffer_t *buf)
 }
 
 
-coroutine void https_worker(tcpsock sock, const char *socks5_host, int socks5_port)
+coroutine void https_worker(tcpsock sock, const char *socks5_host, int socks5_port, int used_port)
 {
     int64_t deadline = now() + 10000;
 
@@ -360,7 +368,7 @@ coroutine void https_worker(tcpsock sock, const char *socks5_host, int socks5_po
         }
         else if (*host != '\0')
         {
-            go(proxy(sock, &buffer, socks5_host, socks5_port, host, 443));
+            go(proxy(sock, &buffer, socks5_host, socks5_port, host, used_port));
             return;
         }
     }

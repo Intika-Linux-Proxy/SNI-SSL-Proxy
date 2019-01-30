@@ -35,7 +35,7 @@
 static void help(void);
 static void signal_cb(int signo);
 coroutine static void http_listener(tcpsock ls);
-coroutine static void https_listener(tcpsock ls);
+coroutine static void https_listener(tcpsock ls, int used_port);
 
 
 static const char *socks5_host = NULL;
@@ -113,7 +113,7 @@ int main(int argc, char **argv)
     signal(SIGHUP, signal_cb);
 #endif
 
-    // listen
+    // listen http
     ipaddr addr = iplocal(host, 80, 0);
     tcpsock http_ls = tcplisten(addr, 32);
     if (http_ls == NULL)
@@ -122,6 +122,8 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     LOG("listen on %s:%d", host, 80);
+    
+    //listen tls
     addr = iplocal(host, 443, 0);
     tcpsock https_ls = tcplisten(addr, 32);
     if (https_ls == NULL)
@@ -130,7 +132,48 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     LOG("listen on %s:%d", host, 443);
+    
+    //listen imap
+    addr = iplocal(host, 993, 0);
+    tcpsock imap_ls = tcplisten(addr, 32);
+    if (imap_ls == NULL)
+    {
+        ERROR("listen");
+        return EXIT_FAILURE;
+    }
+    LOG("listen on %s:%d", host, 993);
+    
+    //listen pop3
+    addr = iplocal(host, 995, 0);
+    tcpsock pop3_ls = tcplisten(addr, 32);
+    if (pop3_ls == NULL)
+    {
+        ERROR("listen");
+        return EXIT_FAILURE;
+    }
+    LOG("listen on %s:%d", host, 995);
+    
+    //listen smtp
+    addr = iplocal(host, 465, 0);
+    tcpsock smtp_ls = tcplisten(addr, 32);
+    if (smtp_ls == NULL)
+    {
+        ERROR("listen");
+        return EXIT_FAILURE;
+    }
+    LOG("listen on %s:%d", host, 465);
+    
+    //listen smtp2
+    addr = iplocal(host, 587, 0);
+    tcpsock smtp2_ls = tcplisten(addr, 32);
+    if (smtp2_ls == NULL)
+    {
+        ERROR("listen");
+        return EXIT_FAILURE;
+    }
+    LOG("listen on %s:%d", host, 587);
 
+    //check socks 
     if (socks5_host != NULL)
     {
         LOG("use socks5://%s:%d", socks5_host, socks5_port);
@@ -153,8 +196,14 @@ int main(int argc, char **argv)
         }
     }
 
+    //Making it parallel
+    //Starting libmil coroutines (go())
     go(http_listener(http_ls));
-    https_listener(https_ls);
+    go(https_listener(imap_ls, 993));
+    go(https_listener(pop3_ls, 995));
+    go(https_listener(smtp_ls, 465));
+    go(https_listener(smtp2_ls, 587));
+    https_listener(https_ls, 443);
 
     return 0;
 }
@@ -190,8 +239,7 @@ coroutine static void http_listener(tcpsock ls)
     }
 }
 
-
-coroutine static void https_listener(tcpsock ls)
+coroutine static void https_listener(tcpsock ls, int used_port)
 {
     while (1)
 	{
@@ -200,6 +248,6 @@ coroutine static void https_listener(tcpsock ls)
 		{
             continue;
 		}
-        go(https_worker(sock, socks5_host, socks5_port));
+        go(https_worker(sock, socks5_host, socks5_port, used_port));
     }
 }

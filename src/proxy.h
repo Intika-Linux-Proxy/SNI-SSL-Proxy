@@ -23,6 +23,6 @@
 #include <libmill.h>
 
 coroutine extern void http_worker(tcpsock ls, const char *socks5_host, int socks5_port);
-coroutine extern void https_worker(tcpsock ls, const char *socks5_host, int socks5_port);
+coroutine extern void https_worker(tcpsock ls, const char *socks5_host, int socks5_port, int used_port);
 
 #endif
