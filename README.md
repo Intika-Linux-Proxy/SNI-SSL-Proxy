@@ -1,4 +1,4 @@
-# SNI-TLS-Proxy #
+# SNI-SSL-Proxy #
 
 [![License](https://api.pxx.io/badge/badge/license-GPL%20v3.0-blue.svg)](https://www.gnu.org/licenses/gpl.html)
 [![Build Status](https://ci.pxx.io/buildStatus/icon?job=sniproxy)](https://ci.pxx.io/job/sniproxy)
