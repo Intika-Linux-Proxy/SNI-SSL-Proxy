@@ -1,16 +1,14 @@
 # SNI-SSL-Proxy #
 
-[![License](https://api.pxx.io/badge/badge/license-GPL%20v3.0-blue.svg)](https://www.gnu.org/licenses/gpl.html)
-[![Build Status](https://ci.pxx.io/buildStatus/icon?job=sniproxy)](https://ci.pxx.io/job/sniproxy)
-
-A SNI/TLS/HTTP/HTTPS/IMAPs/POP3s/SMTPs Proxy, Supporting Upstream SOCKS5 proxy
+A SNI/TLS/HTTP/HTTPS/IMAPs/POP3s/SMTPs Proxy, Supporting Upstream SOCKS5 Proxy
 
 ## Usage ##
 
 `sniproxy -a 127.0.0.1 -w 8 --socks5 192.168.0.5:1080`
 
-## Custom DNS Through Firejail ##
+## Custom DNS ##
 
+Can be done with Firejail
 `firejail --dns=8.8.8.8 --noprofile sniproxy -a 127.0.0.1 -w 8 --socks5 192.168.0.5:1080`
 
 ## Command Details ##
@@ -34,9 +32,9 @@ POP3s: 995
 SMTPs: 465, 587
 ```
 
-## Domain Names Filter ##
+## Domain Filter ##
 
-Domain names filter support can be easily added, but i am not needing that feature so i won't be adding it (feel free to PR), you can run multiple instances of sniproxy under different local IPs to handle different domains routing to different location this much more efficient then domain text filter
+Domain names filter can by achieved by running multiple instances of sniproxy under different local IPs to handle different domains routing to different location
 
 Example : 
 ```
