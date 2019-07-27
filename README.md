@@ -77,11 +77,14 @@ Domain2 -> 10.0.0.2 -> Sniproxy-instance-2 -> Socks5-B
  
 ## Build ##
 
-### 1. Linux/OS X/FreeBSD ###
+### Linux/OS X/FreeBSD ###
 
 Install GNU Autotools, then:
 
 ```bash
+# clone the project 
+git clone https://github.com/Intika-Linux-Proxy/SNI-SSL-Proxy.git
+cd SNI-SSL-Proxy
 # build libmill
 curl -s -L https://github.com/sustrik/libmill/archive/master.tar.gz | tar -zxf -
 mv libmill-master libmill
@@ -101,9 +104,12 @@ make check
 sudo make install
 ```
 
-### 2. Cross compile ###
+### Cross compile ###
 
 ```bash
+# clone the project 
+git clone https://github.com/Intika-Linux-Proxy/SNI-SSL-Proxy.git
+cd SNI-SSL-Proxy
 # setup cross compile tool chain:
 export PATH="$PATH:/pato/to/cross/compile/toolchain/bin/"
 # build libmill
@@ -124,7 +130,7 @@ export LDFLAGS=-L$(pwd)/libmill/.libs
 make
 ```
 
-### 3. Build with static linking ###
+### Build with static linking ###
 
 append `--enable-static` while running `./configure`.
 
